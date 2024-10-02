@@ -1,0 +1,8 @@
+Package: watchlog-agent
+Version: 1.0.0
+Section: base
+Priority: optional
+Architecture: all
+Depends: nodejs (>= 10.0.0)
+Maintainer: mohammadnajm75@gmail.com
+Description: Watchlog Agent for collecting system metrics

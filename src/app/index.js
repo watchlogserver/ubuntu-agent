@@ -13,9 +13,11 @@ const app = express()
 const exec = require('child_process').exec;
 const path = require('path')
 const configFilePath = path.join(__dirname, './../.env');
-const integrations = require("./../integration.json")
+const integrations = require("../integration.json")
 const pm2Integration = require('./integrations/pm2')
 const dockerIntegration = require('./integrations/docker')
+const mongoIntegration = require('./integrations/mongo')
+const redisIntegration = require('./integrations/redis')
 
 
 
@@ -200,16 +202,59 @@ module.exports = class Application {
     // to collect and log metrics
     async collectMetrics() {
 
+
+        try {
+            for (let integrate in integrations) {
+                if (integrations[integrate].service == 'mongodb' && integrations[integrate].monitor == true) {
+                    let username = integrations[integrate].username || ""
+                    let password = integrations[integrate].password || ""
+                    let mongoPort = integrations[integrate].port || "27017"
+                    let mongoHost = integrations[integrate].host || "localhost"
+                    mongoIntegration.getData(mongoHost, mongoPort, username, password, (result, err) => {
+                        if (result) {
+                            watchlogServerSocket.emit("integrations/mongodbservice", {
+                                data: result
+                            })
+                        }
+                    })
+                    break
+                }
+            }
+        } catch (error) {
+
+        }
+
+        try {
+            for (let integrate in integrations) {
+                if (integrations[integrate].service == 'redis' && integrations[integrate].monitor == true) {
+                    let password = integrations[integrate].password || ""
+                    let redisPort = integrations[integrate].port || 6379
+                    let redisHost = integrations[integrate].host || "127.0.0.1"
+                    redisIntegration.getData(redisHost, redisPort, password, (result, err) => {
+                        if (result) {
+                            watchlogServerSocket.emit("integrations/redisservice", {
+                                data: result
+                            })
+                        }
+                    })
+                    break
+                }
+            }
+        } catch (error) {
+        }
+
+
+
         try {
 
-            for(let index in integrations){
+            for (let index in integrations) {
 
-                if(integrations[index].service == 'pm2'){
+                if (integrations[index].service == 'pm2') {
                     pm2Integration.getData((result, err) => {
-                        if(result){
+                        if (result) {
                             watchlogServerSocket.emit("integrations/pm2service", {
                                 data: {
-                                    apps : result
+                                    apps: result
                                 }
                             })
                         }
@@ -221,10 +266,10 @@ module.exports = class Application {
         }
 
         try {
-            for(let integrate in integrations){
-                if(integrations[integrate].service == 'docker' && integrations[integrate].monitor == true){
+            for (let integrate in integrations) {
+                if (integrations[integrate].service == 'docker' && integrations[integrate].monitor == true) {
                     dockerIntegration.getData((result, err) => {
-                        if(result){
+                        if (result) {
                             watchlogServerSocket.emit("dockerInfo", {
                                 data: result
                             })
@@ -234,12 +279,13 @@ module.exports = class Application {
                 }
             }
         } catch (error) {
-            
+
         }
 
 
+
         try {
-         
+
 
 
 
@@ -269,6 +315,7 @@ module.exports = class Application {
                 disksMetrics.push({
                     metric: `system.disk.usagePercent`, count: Math.round((used / total) * 100), tag: "disk"
                 })
+
 
 
 
