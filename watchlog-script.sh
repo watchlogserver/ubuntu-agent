@@ -22,10 +22,15 @@ if ! command -v node &> /dev/null
 then
     echo "Node.js is not installed. Do you want to install it? (Y/N)"
     read install_node
+    # Node.js installation via NodeSource (if user says Y)
     if [[ "$install_node" == "Y" || "$install_node" == "y" ]]; then
-        # Install Node.js
-        curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash - >> $LOG_FILE 2>&1
-        sudo apt-get install -y nodejs >> $LOG_FILE 2>&1
+        echo "Installing Node.js globally..."
+        curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+        if [ $? -ne 0 ]; then
+            log_error "Failed to fetch Node.js setup script."
+            exit 1
+        fi
+        sudo apt-get install -y nodejs
         if [ $? -ne 0 ]; then
             log_error "Failed to install Node.js."
             exit 1
