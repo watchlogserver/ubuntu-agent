@@ -3,13 +3,12 @@ Description=Watchlog Agent
 After=network.target
 
 [Service]
-# Find node in the system path, whether it's installed via nvm or globally
-ExecStart=/bin/bash -c 'if [ -s "/root/.nvm/nvm.sh" ]; then source /root/.nvm/nvm.sh && nvm use default; fi; node /opt/watchlog-agent/src/watchlog-agent.js $apiKey $server'
+ExecStart=node /opt/watchlog-agent/src/watchlog-agent.js $apiKey $server $UUID
 WorkingDirectory=/opt/watchlog-agent/src
 Restart=always
 User=root
 Group=root
-Environment=NODE_ENV=production
 
 [Install]
 WantedBy=multi-user.target
+

@@ -53,6 +53,8 @@ fi
 dpkg-deb -R ./watchlog-agent.deb watchlog-agent
 echo "WATCHLOG_APIKEY=$apiKey" | tee ./watchlog-agent/src/.env >/dev/null
 echo "WATCHLOG_SERVER=$server" | tee -a ./watchlog-agent/src/.env >/dev/null
+echo "UUID=$UUID" | tee -a ./watchlog-agent/src/.env >/dev/null
+
 cp -R ./watchlog-agent /opt/watchlog-agent
 cp ./watchlog-agent/DEBIAN/watchlog-agent.service /etc/systemd/system/watchlog-agent.service
 
