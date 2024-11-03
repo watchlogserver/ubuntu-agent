@@ -7,17 +7,18 @@ const port = 3774
 const watchlog_server = process.env.WATCHLOG_SERVER
 const apiKey = process.env.WATCHLOG_APIKEY
 var ioServer = require('socket.io-client');
-const watchlogServerSocket = ioServer.connect(watchlog_server, { reconnect: true });
+const watchlogServerSocket = require("./socketServer");
 const express = require('express')
 const app = express()
 const exec = require('child_process').exec;
 const path = require('path')
 const configFilePath = path.join(__dirname, './../.env');
-const integrations = require("../integration.json")
+const integrations = require("./../integration.json")
 const pm2Integration = require('./integrations/pm2')
 const dockerIntegration = require('./integrations/docker')
 const mongoIntegration = require('./integrations/mongo')
 const redisIntegration = require('./integrations/redis')
+const nginxIntegration = require('./integrations/nginx')
 
 
 
