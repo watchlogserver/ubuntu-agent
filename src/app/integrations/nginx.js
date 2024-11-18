@@ -69,12 +69,12 @@ for (let integrate in integrations) {
                             }
 
                             let origin = parsedUrl.protocol + "//" + parsedUrl.host;
-                            let cleanApiPath = parsedUrl.pathname;
-                            if(origin && origin !== "/"){
+                            let cleanApiPath = normalizeApiPath(parsedUrl.pathname);
+                            if (origin && origin !== "/") {
                                 origin = origin.replace(/\/+$/, '')
                             }
 
-                            if(cleanApiPath && cleanApiPath !== "/"){
+                            if (cleanApiPath && cleanApiPath !== "/") {
                                 cleanApiPath = cleanApiPath.replace(/\/+$/, '')
                             }
                             if (!isValidOriginAndApi(origin, cleanApiPath, method, parsedLog.status, parsedLog.responseTime)) {
@@ -272,7 +272,7 @@ function processAndSendAggregatedData() {
                         for (const country in apiMethodStatusCountsCheck[origin][api][method][status]) {
                             const statusEntry = apiMethodStatusCountsCheck[origin][api][method][status][country];
                             const avgResponseTime = (statusEntry.totalResponseTime / statusEntry.count).toFixed(3);
-                            const totalRequestSize = statusEntry.totalRequestSize ; // Calculate average request size
+                            const totalRequestSize = statusEntry.totalRequestSize; // Calculate average request size
 
                             // Add country to the result
                             if (origin && api && method && parseInt(status, 10) && statusEntry && avgResponseTime && country) {
@@ -302,4 +302,12 @@ function processAndSendAggregatedData() {
     } catch (error) {
         console.error(`Error processing aggregated data: ${error.message}`);
     }
+}
+
+
+const idPattern = /\/([0-9a-fA-F]{24}|\d+)(?=\/|$)/g;
+
+function normalizeApiPath(apiPath) {
+
+    return apiPath.replace(idPattern, '/:id');
 }
