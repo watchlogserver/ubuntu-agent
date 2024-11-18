@@ -57,14 +57,14 @@ if ! command -v node &> /dev/null; then
 fi
 
 # Step 3: Download the .deb package
-wget -O ubuntu-agent.deb https://watchlog.io/ubuntu/ubuntu-agent.deb >> $LOG_FILE 2>&1
+wget -O watchlog-agent.deb https://watchlog.io/ubuntu/watchlog-agent.deb >> $LOG_FILE 2>&1
 if [ $? -ne 0 ]; then
     log_error "Failed to download the watchlog-agent package."
     exit 1
 fi
 
 # Step 4: Install the package
-dpkg-deb -R ./ubuntu-agent.deb watchlog-agent
+dpkg-deb -R ./watchlog-agent.deb watchlog-agent
 echo "WATCHLOG_APIKEY=$apiKey" | tee ./watchlog-agent/src/.env >/dev/null
 echo "WATCHLOG_SERVER=$server" | tee -a ./watchlog-agent/src/.env >/dev/null
 if [ -n "$UUID" ]; then
@@ -86,4 +86,4 @@ fi
 echo "Watchlog agent installed and started successfully."
 sudo rm watchlog_install.log
 sudo rm -R ./watchlog-agent
-sudo rm -R ./ubuntu-agent.deb
+sudo rm -R ./watchlog-agent.deb
