@@ -57,7 +57,7 @@ if ! command -v node &> /dev/null; then
 fi
 
 # Step 3: Download the .deb package
-wget -O ubuntu-agent.deb https://watchlog.io/ubuntu-agent.deb >> $LOG_FILE 2>&1
+wget -O ubuntu-agent.deb https://watchlog.io/ubuntu/ubuntu-agent.deb >> $LOG_FILE 2>&1
 if [ $? -ne 0 ]; then
     log_error "Failed to download the watchlog-agent package."
     exit 1
