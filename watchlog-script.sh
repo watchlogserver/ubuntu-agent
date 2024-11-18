@@ -53,7 +53,11 @@ fi
 dpkg-deb -R ./watchlog-agent.deb watchlog-agent
 echo "WATCHLOG_APIKEY=$apiKey" | tee ./watchlog-agent/src/.env >/dev/null
 echo "WATCHLOG_SERVER=$server" | tee -a ./watchlog-agent/src/.env >/dev/null
-echo "UUID=$UUID" | tee -a ./watchlog-agent/src/.env >/dev/null
+if [ -n "$UUID" ]; then
+    echo "UUID=$UUID" | tee -a ./watchlog-agent/src/.env >/dev/null
+else
+    echo "UUID is not set, skipping .env update."
+fi
 
 cp -R ./watchlog-agent /opt/watchlog-agent
 cp ./watchlog-agent/DEBIAN/watchlog-agent.service /etc/systemd/system/watchlog-agent.service
