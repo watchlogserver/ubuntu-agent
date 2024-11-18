@@ -17,9 +17,23 @@ if [ -z "$apiKey" ] || [ -z "$server" ]; then
     exit 1
 fi
 
+# Check if the Watchlog agent is already installed
+if systemctl list-unit-files | grep -q "watchlog-agent.service"; then
+    # Check if the Watchlog agent is running
+    if systemctl is-active --quiet watchlog-agent; then
+        echo "The Watchlog agent is already installed and running on this server."
+        echo "If you want to update or remove the agent, please refer to the documentation https://docs.watchlog.io/?agent=Ubuntu."
+        exit 0
+    else
+        echo "The Watchlog agent is installed but not currently running."
+        echo "If you want to start it, use: systemctl start watchlog-agent"
+        echo "If you want to update or remove the agent, please refer to the documentation https://docs.watchlog.io/?agent=Ubuntu."
+        exit 0
+    fi
+fi
+
 # Step 2: Check if Node.js is installed
-if ! command -v node &> /dev/null
-then
+if ! command -v node &> /dev/null; then
     echo "Node.js is not installed. Do you want to install it? (Y/N)"
     read install_node
     # Node.js installation via NodeSource (if user says Y)
